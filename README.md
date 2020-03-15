@@ -1,4 +1,12 @@
-# Features
+# Donor Classification
+
+Identify income of individuals to target them for requesting optimum donation amounts.
+
+
+
+
+
+## Features
 
 age: Age
 workclass: Working Class (Private, Self-emp-not-inc, Self-emp-inc, Federal-gov, Local-gov, State-gov, Without-pay, Never-worked)
@@ -14,6 +22,6 @@ capital-loss: Monetary Capital Losses
 hours-per-week: Average Hours Per Week Worked
 native-country: Native Country (United-States, Cambodia, England, Puerto-Rico, Canada, Germany, Outlying-US(Guam-USVI-etc), India, Japan, Greece, South, China, Cuba, Iran, Honduras, Philippines, Italy, Poland, Jamaica, Vietnam, Mexico, Portugal, Ireland, France, Dominican-Republic, Laos, Ecuador, Taiwan, Haiti, Columbia, Hungary, Guatemala, Nicaragua, Scotland, Thailand, Yugoslavia, El-Salvador, Trinadad&Tobago, Peru, Hong, Holand-Netherlands)
 
-# Target Variable
+## Target Variable
 
 income: Income Class (<=50K, >50K)
