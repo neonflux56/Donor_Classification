@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.externals import joblib
-
+from sklearn.metrics import confusion_matrix, classification_report
 
 
 # inference functions ---------------
@@ -31,20 +31,22 @@ if __name__ =='__main__':
     parser.add_argument('--test', type=str, default=os.environ.get('SM_CHANNEL_TEST'))
     parser.add_argument('--train-file', type=str, default='train.csv')
     parser.add_argument('--test-file', type=str, default='test.csv')
-    parser.add_argument('--features', type=str, default = (pd.read_csv('train.csv').columns[:-1]) )  # in this script we ask user to explicitly name features
-    parser.add_argument('--target', type=str, default = (pd.read_csv('train.csv').columns[-1])) # in this script we ask user to explicitly name the target
+    #parser.add_argument('--features', type=str, default = (pd.read_csv(args.train_file).columns[:-1]) )  # in this script we ask user to explicitly name features
+    #parser.add_argument('--target', type=str, default = (pd.read_csv(args.train_file).columns[-1])) # in this script we ask user to explicitly name the target
 
     args, _ = parser.parse_known_args()
 
     print('reading data')
     train_df = pd.read_csv(os.path.join(args.train, args.train_file))
     test_df = pd.read_csv(os.path.join(args.test, args.test_file))
-
+    features = train_df.columns[:-1]
+    target = train_df.columns[-1]
+    
     print('building training and testing datasets')
-    X_train = train_df[args.features]
-    X_test = test_df[args.features]
-    y_train = train_df[args.target]
-    y_test = test_df[args.target]
+    X_train = train_df[features]
+    X_test = test_df[features]
+    y_train = train_df[target]
+    y_test = test_df[target]
 
     # train
     print('training model')
@@ -55,9 +57,15 @@ if __name__ =='__main__':
     
     model.fit(X_train, y_train)
 
-    # print abs error
     print('validating model')
-    #abs_err = np.abs(model.predict(X_test) - y_test)
+    y_pred = model.predict(X_test)
+    results = confusion_matrix(y_test, y_pred)
+    print("Confusion Matrix:")
+    print(results)
+
+    print("Classification Report:")
+    target_names = ['Lower Salary class', 'Higher Salary class']
+    print(classification_report(y_test, y_pred, target_names=target_names))
     
     # print couple perf metrics
     #for q in [10, 50, 90]:
@@ -69,4 +77,8 @@ if __name__ =='__main__':
     joblib.dump(model, path)
     print('model persisted at ' + path)
     print(args.min_samples_leaf)
-    print(args.train)
+
+    
+def model_fn(model_dir):
+    clf = joblib.load(os.path.join(model_dir, "model.joblib"))
+    return clf
