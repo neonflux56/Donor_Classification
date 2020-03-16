@@ -7,6 +7,8 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.externals import joblib
 from sklearn.metrics import confusion_matrix, classification_report
+from sklearn import metrics
+
 
 
 # inference functions ---------------
@@ -59,6 +61,10 @@ if __name__ =='__main__':
 
     print('validating model')
     y_pred = model.predict(X_test)
+    y_prob = model.predict_proba(X_test)
+    fpr, tpr, thresholds = metrics.roc_curve(y_test, y_prob[:,1], pos_label=1)
+    print('AUC:{}'.format(metrics.auc(fpr, tpr)))
+    
     results = confusion_matrix(y_test, y_pred)
     print("Confusion Matrix:")
     print(results)
@@ -77,8 +83,3 @@ if __name__ =='__main__':
     joblib.dump(model, path)
     print('model persisted at ' + path)
     print(args.min_samples_leaf)
-
-    
-def model_fn(model_dir):
-    clf = joblib.load(os.path.join(model_dir, "model.joblib"))
-    return clf
