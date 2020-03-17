@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.externals import joblib
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix, classification_report,fbeta_score
 from sklearn import metrics
 
 
@@ -62,7 +62,8 @@ if __name__ =='__main__':
     y_pred = model.predict(X_test)
     y_prob = model.predict_proba(X_test)
     fpr, tpr, thresholds = metrics.roc_curve(y_test, y_prob[:,1], pos_label=1)
-    print('AUC:{}'.format(metrics.auc(fpr, tpr)))
+    print('AUC:{:.6f}'.format(metrics.auc(fpr, tpr)))
+    print("F-score on testing data: {:.6f}".format(fbeta_score(y_test, y_pred, beta = 0.5)))
     
     results = confusion_matrix(y_test, y_pred)
     print("Confusion Matrix:")
