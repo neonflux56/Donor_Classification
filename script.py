@@ -6,15 +6,13 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.externals import joblib
-from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import confusion_matrix, classification_report,fbeta_score
 from sklearn import metrics
 
 
 
 # inference functions ---------------
-def model_fn(model_dir):
-    clf = joblib.load(os.path.join(model_dir, "model.joblib"))
-    return clf
+
 
 
 
@@ -55,6 +53,7 @@ if __name__ =='__main__':
     model = RandomForestClassifier(
         n_estimators=args.n_estimators,
         min_samples_leaf=args.min_samples_leaf,
+        
         n_jobs=-1)
     
     model.fit(X_train, y_train)
@@ -63,7 +62,8 @@ if __name__ =='__main__':
     y_pred = model.predict(X_test)
     y_prob = model.predict_proba(X_test)
     fpr, tpr, thresholds = metrics.roc_curve(y_test, y_prob[:,1], pos_label=1)
-    print('AUC:{}'.format(metrics.auc(fpr, tpr)))
+    print('AUC:{:.6f}'.format(metrics.auc(fpr, tpr)))
+    print("F-score on testing data: {:.6f}".format(fbeta_score(y_test, y_pred, beta = 0.5)))
     
     results = confusion_matrix(y_test, y_pred)
     print("Confusion Matrix:")
@@ -79,7 +79,7 @@ if __name__ =='__main__':
     #          + str(np.percentile(a=abs_err, q=q)))
         
     # persist model
-    path = os.path.join(args.model_dir, "model.joblib")
+    modelname = 'model-' + str(args.n_estimators) + '-' + str(args.min_samples_leaf) + '.joblib'
+    path = os.path.join(args.model_dir,modelname)
     joblib.dump(model, path)
     print('model persisted at ' + path)
-    print(args.min_samples_leaf)
