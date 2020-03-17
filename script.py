@@ -12,9 +12,7 @@ from sklearn import metrics
 
 
 # inference functions ---------------
-def model_fn(model_dir):
-    clf = joblib.load(os.path.join(model_dir, "model.joblib"))
-    return clf
+
 
 
 
@@ -79,7 +77,8 @@ if __name__ =='__main__':
     #          + str(np.percentile(a=abs_err, q=q)))
         
     # persist model
-    path = os.path.join(args.model_dir, "model.joblib")
+    modelname = 'model-' + str(args.n_estimators) + '-' + str(args.min_samples_leaf) + '.joblib'
+    path = os.path.join(args.model_dir,modelname)
     joblib.dump(model, path)
     print('model persisted at ' + path)
     print(args.min_samples_leaf)
