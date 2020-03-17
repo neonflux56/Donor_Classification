@@ -53,6 +53,7 @@ if __name__ =='__main__':
     model = RandomForestClassifier(
         n_estimators=args.n_estimators,
         min_samples_leaf=args.min_samples_leaf,
+        
         n_jobs=-1)
     
     model.fit(X_train, y_train)
@@ -81,4 +82,3 @@ if __name__ =='__main__':
     path = os.path.join(args.model_dir,modelname)
     joblib.dump(model, path)
     print('model persisted at ' + path)
-    print(args.min_samples_leaf)
